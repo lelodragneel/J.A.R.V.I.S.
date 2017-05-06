@@ -1,5 +1,6 @@
 #JARVIS
 from pprint import pprint
+import methods
 import time
 import win32gui
 import win32con
@@ -12,6 +13,9 @@ ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
 request = ai.text_request()
 request.lang = 'en'
 request.session_id = 'user_id_lelo'
+
+print(methods.getVolumeLetters())
+
 
 # this is called from the background thread
 def callback(recognizer, audio):

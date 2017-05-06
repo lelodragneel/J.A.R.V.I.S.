@@ -50,3 +50,5 @@ Temporary Items
 .idea/misc.xml
 .idea/modules.xml
 .idea/workspace.xml
+.idea/vcs.xml
+__pycache__/methods.cpython-36.pyc

@@ -1,4 +1,4 @@
-import win32api as w32
+import win32api
 import winxptheme
 import win32gui
 import win32file
@@ -7,11 +7,38 @@ import subprocess
 import winshell
 import os
 import sys
+import win32con
 from string import ascii_uppercase
 
 
+def getWindowWithTitle(title):
+    hwndMain = win32gui.FindWindow(None, title)
+    return hwndMain
+
+
+def getWindowWithPID(pid):
+
+    def callback(hwnd, handlers):
+        if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
+            ctid, cpid = win32process.GetWindowThreadProcessId(hwnd)
+            if cpid == pid:
+                handlers.append(win32gui.GetWindowText(hwnd))
+        return True
+
+    handlers = []
+    win32gui.EnumWindows(callback, handlers)
+    return handlers
+
+
+def getAllItems(dir):
+    files = []
+    for entry in os.scandir(dir):
+        files.append(entry.name)
+    return files
+
+
 def getComputerName():
-    name = w32.GetComputerName()
+    name = win32api.GetComputerName()
     return name
 
 
@@ -26,12 +53,17 @@ def getHandlesOfVisibleWindows():
     def callback(hwnd, hwnds):
         if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
             _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
-            name = win32gui.GetWindowText()
-            hwnds.append(name)
+            name = win32gui.GetWindowText(hwnd)
+            hwnds.append([hwnd, name])
         return True
     hwnds = []
     win32gui.EnumWindows(callback, hwnds)
     return hwnds
+
+
+# def minimizeAll():
+#     for i in getHandlesOfVisibleWindows():
+#         win32gui.PostMessage(i[0], win32con.SW_MINIMIZE)
 
 
 def openApplication(appName):
@@ -46,9 +78,9 @@ def undelete(sourcePath):
     winshell.undelete(sourcePath)
 
 
-def recycledDate(sourcePath):
+def getRecycledDate(sourcePath):
     recycleBin = winshell.recycle_bin()
-    print(recycleBin.versions(sourcePath))
+    return recycleBin.versions(sourcePath)
 
 
 def rename(sourcePath, targetPath):
@@ -73,7 +105,7 @@ def createShortcut(filePath):
 
 
 def getDiskFreeSpace(volumeLetter):
-    freeBytes, totalBytes, totalFreeBytes = w32.GetDiskFreeSpaceEx(volumeLetter)
+    freeBytes, totalBytes, totalFreeBytes = win32api.GetDiskFreeSpaceEx(volumeLetter)
     return totalFreeBytes
 
 

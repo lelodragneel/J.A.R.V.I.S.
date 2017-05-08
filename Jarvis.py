@@ -5,6 +5,10 @@ import time
 import win32gui
 import win32con
 import apiai
+import winshell
+import subprocess
+import os
+import inspect
 import speech_recognition as sr
 
 CLIENT_ACCESS_TOKEN = '8c564ca4f1ae4c45acea584bc16116b5'
@@ -13,8 +17,6 @@ ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
 request = ai.text_request()
 request.lang = 'en'
 request.session_id = 'user_id_lelo'
-
-print(methods.getVolumeLetters())
 
 
 # this is called from the background thread

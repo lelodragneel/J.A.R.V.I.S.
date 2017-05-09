@@ -8,12 +8,23 @@ import winshell
 import os
 import sys
 import win32con
+import re
 from string import ascii_uppercase
 
 
-def getWindowWithTitle(title):
-    hwndMain = win32gui.FindWindow(None, title)
-    return hwndMain
+def setForeground(hwnd):
+    win32gui.SetForegroundWindow(hwnd)
+
+
+def findWindowWithTitle(wildcard):
+
+    def callback(hwnd, handlers):
+        if re.match(wildcard, str(win32gui.GetWindowText(hwnd))) is not None:
+            handlers.append(hwnd)
+
+    handlers = []
+    win32gui.EnumWindows(callback, handlers)
+    return handlers
 
 
 def getWindowWithPID(pid):
@@ -42,13 +53,6 @@ def getComputerName():
     return name
 
 
-# def GetWindowTheme():
-#     if winxptheme.IsThemeActive():
-#         print('k')
-#         name = winxptheme.GetCurrentThemeName()
-#         return str(name)
-
-
 def getHandlesOfVisibleWindows():
     def callback(hwnd, hwnds):
         if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
@@ -61,9 +65,13 @@ def getHandlesOfVisibleWindows():
     return hwnds
 
 
-# def minimizeAll():
-#     for i in getHandlesOfVisibleWindows():
-#         win32gui.PostMessage(i[0], win32con.SW_MINIMIZE)
+def minimize(target="this", monitor="all"):
+    if target == "this":
+        hwnd = win32gui.GetForegroundWindow()
+        win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
+    elif target == "all":
+        for i in getHandlesOfVisibleWindows():
+            win32gui.ShowWindow(i[0], win32con.SW_MINIMIZE)
 
 
 def openApplication(appName):

@@ -3,6 +3,7 @@ from pprint import pprint
 import methods
 import time
 import win32gui
+import win32api
 import win32con
 import apiai
 import winshell
@@ -17,6 +18,13 @@ ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
 request = ai.text_request()
 request.lang = 'en'
 request.session_id = 'user_id_lelo'
+
+# found = methods.findWindowWithTitle("Untitled - Notepad")
+# pprint(found)
+
+# handle = methods.getWindowWithTitle("untitled - notepad")
+# monHandle = win32api.MonitorFromWindow(handle)
+# print(win32api.GetMonitorInfo(monHandle))
 
 
 # this is called from the background thread
@@ -42,8 +50,8 @@ def callback(recognizer, audio):
 r = sr.Recognizer()
 m = sr.Microphone()
 with m as source:
-    print("Say something:")
-    r.adjust_for_ambient_noise(source, 0.1) # we only need to calibrate once, before we start listening
+    print("Say something: ")
+    r.adjust_for_ambient_noise(source, duration=1) # listen for 1 second to calibrate the energy threshold for ambient noise levels
 
 # start listening in the background (note that we don't have to do this inside a `with` statement)
 stop_listening = r.listen_in_background(m, callback)

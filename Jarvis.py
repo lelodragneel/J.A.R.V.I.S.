@@ -35,10 +35,20 @@ def callback(recognizer, audio):
         response = request.getresponse()
         responseStr = response.read().decode('utf-8')
         response_obj = json.loads(responseStr)
-        print(response_obj["result"]["resolvedQuery"])
-        # pprint(response.read())
     except:
         print("Error getting response")
+    evaluateIntent(response_obj)
+
+
+def evaluateIntent(response_obj):
+    intent = response_obj['result']['action']
+    print('DEBUG: intent: ' + intent)
+    if "minimize" in intent:
+        target_window = response_obj['result']['parameters']['target_window']
+        print('DEBUG: target_window: ', target_window)
+        target_monitor = response_obj['result']['parameters']['target_monitor']
+        print('DEBUG: target_monitor: ', target_monitor)
+        methods.minimize(target_window, target_monitor)
 
 
 # obtain audio from the microphone

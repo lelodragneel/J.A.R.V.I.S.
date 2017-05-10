@@ -68,16 +68,17 @@ def getHandlesOfVisibleWindows():
     return hwnds
 
 
-def minimize(target="this", monitor="all"):
-    if target == "this":
+def minimize(target_window=[], target_monitor="all"):
+    if len(target_window) == 0:
         hwnd = win32gui.GetForegroundWindow()
         win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
-    elif target == "all":
+    elif len(target_window) > 0 and target_window[0] == "all":
         for i in getHandlesOfVisibleWindows():
             win32gui.ShowWindow(i[0], win32con.SW_MINIMIZE)
     else:
-        hwnd = findWindowWithTitle(target)
-        win32gui.ShowWindow(hwnd[0], win32con.SW_MINIMIZE)
+        for window in target_window:
+            hwnd = findWindowWithTitle(str('.*'+window+'.*'))
+            win32gui.ShowWindow(hwnd[0], win32con.SW_MINIMIZE)
 
 
 def setForeground(wildcard):

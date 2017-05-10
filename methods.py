@@ -1,15 +1,18 @@
 import win32api
-import winxptheme
 import win32gui
 import win32file
 import win32process
 import subprocess
 import winshell
 import os
-import sys
 import win32con
 import re
 from string import ascii_uppercase
+
+
+# def getActiveWindow():
+#     hwnd = win32gui.GetActiveWindow()
+#     return hwnd
 
 
 def setForeground(hwnd):
@@ -19,7 +22,7 @@ def setForeground(hwnd):
 def findWindowWithTitle(wildcard):
 
     def callback(hwnd, handlers):
-        if re.match(wildcard, str(win32gui.GetWindowText(hwnd))) is not None:
+        if re.match(wildcard, str(win32gui.GetWindowText(hwnd)), flags=re.IGNORECASE) is not None:
             handlers.append(hwnd)
 
     handlers = []
@@ -72,6 +75,15 @@ def minimize(target="this", monitor="all"):
     elif target == "all":
         for i in getHandlesOfVisibleWindows():
             win32gui.ShowWindow(i[0], win32con.SW_MINIMIZE)
+    else:
+        hwnd = findWindowWithTitle(target)
+        win32gui.ShowWindow(hwnd[0], win32con.SW_MINIMIZE)
+
+
+def setForeground(wildcard):
+        hwnd = findWindowWithTitle(wildcard)
+        win32gui.ShowWindow(hwnd[0], win32con.SW_SHOWNORMAL)
+        win32gui.SetForegroundWindow(hwnd[0])
 
 
 def openApplication(appName):

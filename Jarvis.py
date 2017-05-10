@@ -2,14 +2,8 @@
 from pprint import pprint
 import methods
 import time
-import win32gui
-import win32api
-import win32con
 import apiai
-import winshell
-import subprocess
-import os
-import inspect
+import json
 import speech_recognition as sr
 
 CLIENT_ACCESS_TOKEN = '8c564ca4f1ae4c45acea584bc16116b5'
@@ -18,9 +12,6 @@ ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
 request = ai.text_request()
 request.lang = 'en'
 request.session_id = 'user_id_lelo'
-
-# found = methods.findWindowWithTitle("Untitled - Notepad")
-# pprint(found)
 
 # handle = methods.getWindowWithTitle("untitled - notepad")
 # monHandle = win32api.MonitorFromWindow(handle)
@@ -38,10 +29,14 @@ def callback(recognizer, audio):
         print('DEBUG: Error audio')
         return
     try:
-        print("DEBUG: requesting..")
+        print("DEBUG: requesting... for: " + recognizedText)
+        request = ai.text_request()
         request.query = recognizedText
         response = request.getresponse()
-        pprint(response.read())
+        responseStr = response.read().decode('utf-8')
+        response_obj = json.loads(responseStr)
+        print(response_obj["result"]["resolvedQuery"])
+        # pprint(response.read())
     except:
         print("Error getting response")
 

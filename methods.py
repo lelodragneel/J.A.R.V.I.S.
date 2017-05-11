@@ -9,10 +9,26 @@ import win32con
 import re
 from string import ascii_uppercase
 
-
 # def getActiveWindow():
 #     hwnd = win32gui.GetActiveWindow()
 #     return hwnd
+
+
+def getSelectedFilePath():
+
+    def callback(handle, extra):
+        s = win32gui.GetWindowText(handle)
+        if re.match('Address:.*', s):
+            global addressField
+            addressField = s
+
+    hwnd = win32gui.GetForegroundWindow()
+    if hwnd:
+        if win32gui.GetClassName(hwnd) == 'CabinetWClass':  # the main explorer window
+            global addressField
+            win32gui.EnumChildWindows(hwnd, callback, None)
+            path = addressField[9:]
+            print(path)
 
 
 def setForeground(hwnd):
@@ -30,7 +46,7 @@ def findWindowWithTitle(wildcard):
     return handlers
 
 
-def getWindowWithPID(pid):
+def getWindowHandlerWithPID(pid):
 
     def callback(hwnd, handlers):
         if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):

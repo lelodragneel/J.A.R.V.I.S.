@@ -43,12 +43,15 @@ def callback(recognizer, audio):
 def evaluateIntent(response_obj):
     intent = response_obj['result']['action']
     print('DEBUG: intent: ' + intent)
-    if "minimize" in intent:
+
+    if intent == "minimize":
         target_window = response_obj['result']['parameters']['target_window']
         print('DEBUG: target_window: ', target_window)
         target_monitor = response_obj['result']['parameters']['target_monitor']
         print('DEBUG: target_monitor: ', target_monitor)
         methods.minimize(target_window, target_monitor)
+    elif intent == "create_shortcut":
+        methods.createShortcut("")
 
 
 # obtain audio from the microphone
@@ -56,7 +59,7 @@ r = sr.Recognizer()
 m = sr.Microphone()
 with m as source:
     print("Say something: ")
-    r.adjust_for_ambient_noise(source, duration=1) # listen for 1 second to calibrate the energy threshold for ambient noise levels
+    r.adjust_for_ambient_noise(source, duration=1)  # listen for 1 second to calibrate the energy threshold for ambient noise levels
 
 # start listening in the background (note that we don't have to do this inside a `with` statement)
 stop_listening = r.listen_in_background(m, callback)

@@ -28,7 +28,7 @@ def getSelectedFilePath():
             global addressField
             win32gui.EnumChildWindows(hwnd, callback, None)
             path = addressField[9:]
-            print(path)
+            return path
 
 
 def setForeground(hwnd):
